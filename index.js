@@ -11,26 +11,20 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
-const History = [];
+//no need to manually handle history
+const chat = ai.chats.create({
+    model: "gemini-2.5-flash",
+    history: [],
+});
 
-async function Talkting(userInput) {
-  History.push({ role: 'user', parts: [{ text: userInput }] });
-
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    //to maintain chat history whole previous context given
-    contents: History
-  });
-
-  History.push({ role: 'model', parts: [{ text: response.text }] });
-
-  console.log("\n" + response.text);
-  console.log(History);
-}
 
 async function main() {
   const userInput = readlineSync.question('Ask me something => ');
-  await Talkting(userInput);
+   const response = await chat.sendMessage({
+    message: userInput,
+  });
+  console.log("Chat response :", response.text);
+  //console.log("Chat history:", chat.history);
   main(); //to continue the conversation repeatedly
 }
 
