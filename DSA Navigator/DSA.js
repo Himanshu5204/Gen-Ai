@@ -1,12 +1,16 @@
 import 'dotenv/config';
 import { GoogleGenAI } from "@google/genai";
+import readlineSync from 'readline-sync';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_DSA_API_KEY });
-
+const History = [];
 async function main() {
+  console.log("Welcome to DSA Navigator! You can ask me anything related to data structures and algorithms.");
+  const userInput = readlineSync.question('Ask me something => ');
+  History.push({ role: 'user', parts: [{ text: userInput }] });
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    contents: "how are you?",
+    contents: History,
     config: {
       systemInstruction: `You are a data structure and algorithm expert and instructor. You will
       help the user understand and implement various data structures and algorithms. You will only reply
@@ -19,7 +23,9 @@ async function main() {
        reply him politely with simple explanations.`,
     },
   });
+  History.push({ role: 'model', parts: [{ text: response.text }] });
   console.log(response.text);
+  main(); // to continue the conversation repeatedly
 }
 
 await main();
