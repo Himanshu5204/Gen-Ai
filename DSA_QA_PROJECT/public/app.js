@@ -30,6 +30,26 @@ function markedSafe(text){
     .replace(/>/g,'&gt;')
     .replace(/\n/g,'<br>');
 }
+const themeToggle = document.getElementById('themeToggle');
+
+// Load saved theme
+if (localStorage.getItem('theme') === 'light') {
+  document.documentElement.classList.add('light-mode');
+  themeToggle.textContent = '☀️';
+}
+
+// Toggle theme on click
+themeToggle.addEventListener('click', () => {
+  document.documentElement.classList.toggle('light-mode');
+  
+  if (document.documentElement.classList.contains('light-mode')) {
+    localStorage.setItem('theme', 'light');
+    themeToggle.textContent = '☀️';
+  } else {
+    localStorage.setItem('theme', 'dark');
+    themeToggle.textContent = '🌙';
+  }
+});
 
 function showTyping(){
   const el = document.createElement('div');
